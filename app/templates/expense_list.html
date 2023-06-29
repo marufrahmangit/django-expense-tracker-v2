@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load humanize %}
+
+{% load crispy_forms_tags %}
+
+<div class="col-md-12 col-sm-12 mx-auto">
+    <div class="table-responsive">
+        <p><b>Your recent expenses</b></p>
+        <p>
+            <a href="{% url 'expense-create' %}" class="btn btn-sm btn-primary"> <i class="fa fa-square-plus"></i> Add New</a>
+            <a href="{% url 'upload' %}" class="btn btn-sm btn-success"> <i class="fa fa-file-excel"></i> Upload Excel file</a>
+        </p>
+        <table class="table table-sm table-striped">
+            <thead>
+            <tr>
+                <th>Items</th>
+                <th>Amount</th>
+                <th>Paid From</th>
+                <th>Date</th>
+                <th>Updated</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>
+                    {% for item in expense.items.all %}
+                    <a href="{% url 'expense-update' pk=expense.id %}">{{ item.name }}</a>{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                    No items found.
+                    {% endfor %}
+                </td>
+                <td>{{ expense.amount | intcomma }}</td>
+                <td>{{ expense.expense_method.name }}</td>
+                <td>{{ expense.entry_date }}</td>
+                <td>{{ expense.last_update_date }}</td>
+                <td>
+                    <a href="{% url 'expense-delete' expense.id%}"><!--Delete-->
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="12">No expenses found.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

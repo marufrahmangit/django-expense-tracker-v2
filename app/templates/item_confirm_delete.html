@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<div class="text-center">
+    <b>Confirm Delete</b>
+    <p>Are you sure you want to delete item <b>"{{item}}"</b> ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-danger"> <i class="fa fa-trash"></i> Delete</button>
+        <a href="{% url 'item-create' %}" class="btn btn-sm btn-secondary"> <i class="fa fa-ban"></i> No</a>
+    </form>
+</div>
+{% endblock %}

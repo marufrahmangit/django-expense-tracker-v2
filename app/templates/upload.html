@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+<div class="col-md-6 col-sm-6 mx-auto">
+    <p><b>Upload Expenses from Excel file</b></p>
+    <form method="post" enctype="multipart/form-data" action="{% url 'upload' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-group">
+            <button class="btn btn-sm btn-primary" type="submit"> <i class="fa fa-upload"></i> Upload</button>
+            <a href="{% url 'expense-list' %}" class="btn btn-sm btn-secondary"> <i class="fa fa-ban"></i> Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

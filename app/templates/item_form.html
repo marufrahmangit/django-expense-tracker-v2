@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<div class="row">
+    <div class="col-md-6 col-sm-6">
+        <div class="row">
+            <p><b>Your current items</b></p>
+        </div>
+        <div class="row">
+            <em style="font-size:0.75em">*Click an item to edit or remove</em><br/>
+            <p>
+                {% for item in items %}
+                {% if not forloop.last %}
+                <a href="{% url 'item-update' pk=item.id %}" style="text-decoration:none">{{ item }},</a>
+                {% else %}
+                <a href="{% url 'item-update' pk=item.id %}" style="text-decoration:none">{{ item }}</a>
+                {% endif %}
+                {% empty %}
+                No items found.
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-sm-6">
+        <div class="row">
+            <p><b>Add a new item</b></p>
+        </div>
+        <div class="row">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-sm btn-primary"> <i class="fa-regular fa-floppy-disk"></i> Save</button>
+                <a href="{% url 'item-create' %}" class="btn btn-sm btn-secondary"> <i class="fa fa-ban"></i> Cancel</a>
+                {% url 'item-update' pk=item.id as url_for_edit %}
+                {% if request.get_full_path == url_for_edit %}
+                <a class="btn btn-sm btn-danger" href="{% url 'item-delete' pk=item.id %}"> <i class="fa fa-trash"></i> Delete</a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+<div class="col-md-6 col-sm-6 mx-auto">
+    <p><b>Add or Update a payment method</b></p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-sm btn-primary"> <i class="fa-regular fa-floppy-disk"></i> Save</button>
+        <a href="{% url 'expense-method-list' %}" class="btn btn-sm btn-secondary"> <i class="fa fa-ban"></i> Cancel</a>
+    </form>
+</div>
+{% endblock %}

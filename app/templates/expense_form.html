@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load static %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+{% load crispy_forms_tags %}
+
+<div class="col-md-6 col-sm-6 mx-auto">
+    <p><b>Add or Update an expense</b></p>
+    <form id="expense-form" method="post">
+        {% csrf_token %}
+        <!--  {{ form.as_p }}-->
+        {{ form|crispy }}
+        <div class="form-group">
+            <button class="btn btn-sm btn-primary" type="submit"> <i class="fa-regular fa-floppy-disk"></i> Save</button>
+            <a href="{% url 'expense-list' %}" class="btn btn-sm btn-secondary"> <i class="fa fa-ban"></i> Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+        crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.item').select2();
+    });
+</script>
+{% endblock %}

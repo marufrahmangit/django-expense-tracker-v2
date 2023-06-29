@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+<div class="col-md-12 col-sm-12 mx-auto">
+    <div class="table-responsive">
+        <p><b>Your payment methods</b></p>
+        <p>
+            <a href="{% url 'expense-method-create' %}" class="btn btn-sm btn-primary"> <i class="fa fa-square-plus"></i> Add New</a>
+        </p>
+        <table class="table table-sm table-striped">
+            <thead>
+            <tr>
+                <th>Method</th>
+                <th>Balance</th>
+<!--                <th>Entry Date</th>-->
+                <th>Updated</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for expense_method in expense_methods %}
+            <tr>
+                <td>
+                    <a href="{% url 'expense-method-update' pk=expense_method.id %}">{{ expense_method.name }}</a>
+                </td>
+                <td>{{ expense_method.balance | intcomma }}</td>
+                <td>{{ expense_method.last_update_date }}</td>
+                <td>
+                    <a href="{% url 'expense-method-delete' pk=expense_method.id %}"><!--Delete-->
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="12">No payment methods found.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
