@@ -1,12 +1,14 @@
-from datetime import datetime, time
-from dateutil.parser import parse as parse_date
+import io
+from datetime import datetime
 
 import openpyxl
-from django.db import transaction
+import csv
 
+import pandas as pd
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
 from django.views import View
@@ -125,13 +127,12 @@ class UploadView(LoginRequiredMixin, View):
             rows = worksheet.iter_rows(values_only=True)
 
             with transaction.atomic():
-
                 for row in rows:
                     items = row[0]
                     amount = row[1]
                     expense_method_name = row[2]
-                    date_entered = row[3]
-                    date_updated = row[4]
+                    entry_date = row[3]
+                    last_update_date = row[4]
 
                     if not items:
                         continue  # Skip empty rows
@@ -142,42 +143,42 @@ class UploadView(LoginRequiredMixin, View):
                     # Create or get the expense method
                     expense_method, _ = ExpenseMethod.objects.get_or_create(
                         name=expense_method_name,
-                        defaults={'balance': 100000.00, 'user': request.user}
+                        defaults={'balance': 100000, 'user': request.user}
                     )
 
-                    if date_entered:
-                        try:
-                            date_entered = parse_date(str(date_entered))
-                        except ValueError:
-                            date_entered = datetime.now()
+                    if entry_date:
+                        entry_date = datetime.strptime(str(entry_date), "%Y-%m-%d %H:%M:%S")
                     else:
-                        date_entered = datetime.now()
+                        entry_date = datetime.now()
 
-                    if not isinstance(date_entered, datetime):
-                        date_entered = datetime.combine(date_entered, time(0, 0))
-
-                    if date_updated:
-                        try:
-                            date_updated = parse_date(str(date_updated))
-                        except ValueError:
-                            date_updated = date_entered
+                    if last_update_date:
+                        last_update_date = datetime.strptime(str(last_update_date), "%Y-%m-%d %H:%M:%S")
                     else:
-                        date_updated = date_entered
+                        last_update_date = datetime.now()
 
-                    if not isinstance(date_updated, datetime):
-                        date_updated = datetime.combine(date_updated, time(0, 0))
+                    print("1")
+                    print(entry_date)
+                    print(last_update_date)
 
                     # Create the expense
                     expense = Expense(
                         amount=amount,
                         expense_method=expense_method,
-                        entry_date=date_entered,
-                        last_update_date=date_updated,
+                        entry_date=entry_date,
+                        last_update_date=last_update_date,
                         user=request.user)
 
                     try:
-                        expense.full_clean()  # Run model validation
+                        print("2")
+                        print(expense.entry_date)
+                        print(expense.last_update_date)
+
                         expense.save()
+
+                        print("3")
+                        print(expense.entry_date)
+                        print(expense.last_update_date)
+
                         expense.items.set([item])
                     except ValidationError as e:
                         form.add_error(None, e)  # Add error to the form
