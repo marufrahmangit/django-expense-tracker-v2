@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Item(models.Model):
@@ -68,6 +69,13 @@ class Expense(models.Model):
                 raise ValidationError("Amount exceeds the available balance.")
             self.expense_method.balance -= self.amount
             self.expense_method.save()
+
+        # Process entry_date and last_update_date
+        if not self.entry_date:
+            self.entry_date = timezone.now()
+
+        if not self.last_update_date:
+            self.last_update_date = timezone.now()
 
         super().save(*args, **kwargs)
 

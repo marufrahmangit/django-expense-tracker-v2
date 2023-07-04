@@ -131,8 +131,8 @@ class UploadView(LoginRequiredMixin, View):
                     items = row[0]
                     amount = row[1]
                     expense_method_name = row[2]
-                    entry_date = row[3]
-                    last_update_date = row[4]
+                    entry_date = row[3] if len(row) > 3 else None
+                    last_update_date = row[4] if len(row) > 4 else None
 
                     if not items:
                         continue  # Skip empty rows
@@ -147,14 +147,20 @@ class UploadView(LoginRequiredMixin, View):
                     )
 
                     if entry_date:
-                        entry_date = datetime.strptime(str(entry_date), "%Y-%m-%d %H:%M:%S")
+                        if isinstance(entry_date, datetime):
+                            entry_date = entry_date.strftime("%Y-%m-%d %H:%M:%S")
+                        else:
+                            entry_date = f"{entry_date} {datetime.now().strftime('%H:%M:%S')}"
                     else:
-                        entry_date = datetime.now()
+                        entry_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
                     if last_update_date:
-                        last_update_date = datetime.strptime(str(last_update_date), "%Y-%m-%d %H:%M:%S")
+                        if isinstance(last_update_date, datetime):
+                            last_update_date = last_update_date.strftime("%Y-%m-%d %H:%M:%S")
+                        else:
+                            last_update_date = f"{last_update_date} {datetime.now().strftime('%H:%M:%S')}"
                     else:
-                        last_update_date = datetime.now()
+                        last_update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
                     print("1")
                     print(entry_date)
